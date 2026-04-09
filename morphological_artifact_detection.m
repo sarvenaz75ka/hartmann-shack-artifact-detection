@@ -1,4 +1,4 @@
-function run_morphological_artifact_detection(inputFolder, outputFolder, labelFile)
+function morphological_artifact_detection(inputFolder, outputFolder, labelFile)
 % RUN_ARTIFACT_CLASSIFICATION
 %
 % Classify Hartmann-Shack (HS) images into valid and invalid categories
@@ -16,8 +16,8 @@ function run_morphological_artifact_detection(inputFolder, outputFolder, labelFi
 %      metrics and a confusion matrix
 %
 % Usage:
-%   run_morphological_artifact_detection(inputFolder, outputFolder)
-%   run_morphological_artifact_detection(inputFolder, outputFolder, labelFile)
+%   morphological_artifact_detection(inputFolder, outputFolder)
+%   morphological_artifact_detection(inputFolder, outputFolder, labelFile)
 %
 % Inputs:
 %   inputFolder  - Path to the folder containing the input images
