@@ -15,7 +15,7 @@ outputFolder = 'C:\Ainaimage\16\2 classification\kfold_circularity\k-5\out_blink
 disp('Loading the Datastore from .mat file...');
 % The 'load' command will create the variables imdsTest and imdsTrain in your workspace
 load(matFilePath);
-
+% loading this
 % Ensure imdsTest exists in the loaded data
 if ~exist('imdsTest', 'var')
     error('imdsTest variable not found in the specified .mat file.');
