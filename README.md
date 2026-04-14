@@ -329,12 +329,6 @@ This repository is intended for:
 
 ---
 
-## Author
-
-**Sarvenaz Kalantarinejad**
-
----
-
 ## License
 
 This repository is intended for academic and research use.
