@@ -1,92 +1,340 @@
-# Hartmann-Shack-Artifact-Detection
+# Hartmann–Shack Artifact Detection
 
+This repository provides a complete framework for detecting artifacts in Hartmann–Shack (HS) wavefront sensor images using both classical image processing methods and deep learning approaches.
 
+The repository includes:
 
-## Getting started
+* binary classification methods for **valid / invalid** HS images
+* multiclass classification methods for **blinking / corneal / laser reflex / valid**
+* folder-based inference scripts for easy use
+* optional evaluation using Excel label files
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+---
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Repository Structure
 
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+```text
+hartmann-shack-artifact-detection/
+│
+├── sample_images/                  # Example HS images
+├── sample_labels_2class.xlsx       # Ground-truth labels for binary classification
+├── sample_labels_4class.xlsx       # Ground-truth labels for multiclass classification
+│
+├── classical_methods/              # Classical image-processing approaches
+│   ├── morphological_artifact_detection.m
+│   ├── correlation_artifact_detection.m
+│   └── reference/
+│       └── meanImage_weighted_1024_2.bmp
+│
+├── mobilenet/                      # MobileNet inference scripts and trained models
+├── shufflenet/                     # ShuffleNet inference scripts and trained models
+├── squeezenet/                     # SqueezeNet inference scripts and trained models
+│
+└── README.md
 ```
-cd existing_repo
-git remote add origin https://gitlab.upc.edu/sarvenaz.kalantarinejad/hartmann-shack-artifact-detection.git
-git branch -M main
-git push -uf origin main
+
+---
+
+## Methods
+
+### 1. Classical Methods
+
+The repository includes two classical approaches for artifact detection in HS images:
+
+* **Morphological-based detection**
+
+  * pupil detection
+  * pupil circularity validation
+  * pupil size validation
+  * corneal reflection detection
+
+* **Correlation-based detection**
+
+  * pupil localization
+  * pupil centering
+  * image correlation with a reference mean image
+  * reflection-based rejection
+
+### 2. Deep Learning Methods
+
+The repository includes deep learning inference pipelines based on:
+
+* **MobileNet**
+* **ShuffleNet**
+* **SqueezeNet**
+
+Each architecture is provided for:
+
+* **binary classification**
+
+  * `valid`
+  * `invalid`
+
+* **multiclass classification**
+
+  * `blinking`
+  * `corneal`
+  * `laser reflex`
+  * `valid`
+
+---
+
+## Note on Class Labels
+
+The class **"laser reflex"** used in the dataset corresponds to **lens reflection** in the manuscript.
+
+Both terms refer to the same type of optical artifact.
+
+---
+
+## Supported Tasks
+
+### Binary Classification
+
+Binary classification scripts separate images into:
+
+* `valid`
+* `invalid`
+
+### Multiclass Classification
+
+Multiclass classification scripts separate images into:
+
+* `blinking`
+* `corneal`
+* `laser reflex`
+* `valid`
+
+---
+
+## Input Data
+
+### Images
+
+Images should be placed inside an input folder such as:
+
+```text
+sample_images/
 ```
 
-## Integrate with your tools
+Supported image formats include:
 
-- [ ] [Set up project integrations](https://gitlab.upc.edu/sarvenaz.kalantarinejad/hartmann-shack-artifact-detection/-/settings/integrations)
+* `.bmp`
+* `.png`
+* `.jpg`
+* `.jpeg`
+* `.tif`
+* `.tiff`
 
-## Collaborate with your team
+### Label Files
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+Ground-truth labels are optional. If provided, the scripts compute performance metrics.
 
-## Test and Deploy
+The Excel label file must contain two columns:
 
-Use the built-in continuous integration in GitLab.
+```text
+filename | label
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+#### Binary Example
 
-***
+```text
+filename | label
+img1.bmp | 1
+img2.bmp | 0
+```
 
-# Editing this README
+or equivalently:
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+```text
+filename | label
+img1.bmp | valid
+img2.bmp | invalid
+```
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+#### Multiclass Example
 
-## Name
-Choose a self-explaining name for your project.
+```text
+filename | label
+img1.bmp | blinking
+img2.bmp | corneal
+img3.bmp | laser reflex
+img4.bmp | valid
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Notes:
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+* `filename` must exactly match the image filename, including the extension.
+* Labels may be numeric or text, depending on the script.
+* For multiclass scripts, text labels must exactly match the training labels.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+---
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## Example Usage
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### Binary Classification Example
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+```matlab
+mobilenet_2class_inference( ...
+    'sample_images', ...
+    'results', ...
+    'mobilenet_binary_trained.mat', ...
+    'sample_labels_2class.xlsx')
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### Multiclass Classification Example
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+```matlab
+shufflenet_4class_inference( ...
+    'sample_images', ...
+    'results', ...
+    'shufflenet_4class_trained.mat', ...
+    'sample_labels_4class.xlsx')
+```
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+You may also run the scripts without a label file. In that case, the code performs inference only and skips performance evaluation.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+---
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## Output
+
+After execution, results are saved in a user-defined output folder.
+
+### Binary Classification Output
+
+```text
+results/
+├── valid/
+├── invalid/
+└── prediction_results_YYYYMMDD_HHMMSS.xlsx
+```
+
+### Multiclass Classification Output
+
+```text
+results/
+├── blinking/
+├── corneal/
+├── laser reflex/
+├── valid/
+└── prediction_results_YYYYMMDD_HHMMSS.xlsx
+```
+
+The output Excel file may include:
+
+* image name
+* predicted class name
+* predicted label or label ID
+* confidence score
+* elapsed processing time
+* optional ground-truth label
+
+---
+
+## Evaluation Metrics
+
+If a label file is provided, the scripts compute quantitative evaluation metrics.
+
+### Binary Classification Metrics
+
+* Accuracy
+* Sensitivity (Recall)
+* Specificity
+* Precision
+* F1-score
+* Confusion matrix
+
+### Multiclass Classification Metrics
+
+* Overall accuracy
+* Confusion matrix
+* Per-class precision
+* Per-class recall
+* Per-class F1-score
+* Macro-averaged precision
+* Macro-averaged recall
+* Macro-averaged F1-score
+
+---
+
+## Preprocessing
+
+### Classical Methods
+
+Preprocessing may include:
+
+* grayscale conversion
+* morphological opening
+* binarization
+* hole filling
+* connected-component analysis
+* pupil-based region-of-interest selection
+
+### Deep Learning Methods
+
+Depending on the architecture, preprocessing may include:
+
+* grayscale to RGB conversion
+* removal of extra channels if present
+* resizing according to network input size
+* normalization
+
+Typical input resolutions:
+
+* **MobileNet**: typically `224 × 224`
+* **ShuffleNet**: typically `224 × 224`
+* **SqueezeNet**: typically `227 × 227`
+
+For SqueezeNet, ImageNet-style channel normalization is applied to match the training pipeline.
+
+---
+
+## Sample Data
+
+A small set of example Hartmann–Shack images is included in:
+
+```text
+sample_images/
+```
+
+The corresponding ground-truth label files are:
+
+* `sample_labels_2class.xlsx`
+* `sample_labels_4class.xlsx`
+
+These files can be used to test the inference scripts and verify the full pipeline.
+
+---
+
+## Requirements
+
+The code was developed in MATLAB and requires:
+
+* MATLAB
+* Deep Learning Toolbox
+* Image Processing Toolbox
+
+Depending on your workflow, GPU support may improve performance, but inference can also be executed on CPU.
+
+---
+
+## Purpose
+
+This repository is intended for:
+
+* research reproducibility
+* comparison between classical and deep learning methods
+* practical testing of trained artifact-detection models
+* supporting material for academic publications
+
+---
+
+## Author
+
+**Sarvenaz Kalantarinejad**
+
+---
 
 ## License
-For open source projects, say how it is licensed.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+This repository is intended for academic and research use.
