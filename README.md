@@ -1,6 +1,5 @@
-[![DOI](https://zenodo.org/badge/ID/20022015.svg)](https://doi.org/10.5281/zenodo.20022014)
-![MATLAB](https://img.shields.io/badge/MATLAB-required-orange)
-![License](https://img.shields.io/badge/license-MIT-blue)
+[![DOI](https://zenodo.org/badge/20022015.svg)](https://doi.org/10.5281/zenodo.20022014)
+
 # Hartmann–Shack Artifact Detection
 
 This repository provides a complete framework for detecting artifacts in Hartmann–Shack (HS) wavefront sensor images using both classical image processing methods and deep learning approaches.
