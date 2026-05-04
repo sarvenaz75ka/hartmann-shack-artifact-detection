@@ -2,11 +2,12 @@
 
 This repository provides a complete framework for detecting artifacts in Hartmann–Shack (HS) wavefront sensor images using both classical image processing methods and deep learning approaches.
 
-The repository includes:
+## The repository includes
 
 * binary classification methods for **valid / invalid** HS images
 * multiclass classification methods for **blinking / corneal / laser reflex / valid**
 * folder-based inference scripts for easy use
+* training pipelines with k-fold cross-validation for reproducible deep learning models
 * optional evaluation using Excel label files
 
 ---
@@ -16,19 +17,45 @@ The repository includes:
 ```text
 hartmann-shack-artifact-detection/
 │
-├── sample_images/                  # Example HS images
-├── sample_labels_2class.xlsx       # Ground-truth labels for binary classification
-├── sample_labels_4class.xlsx       # Ground-truth labels for multiclass classification
+├── sample_images/
+├── sample_labels_2class.xlsx
+├── sample_labels_4class.xlsx
 │
-├── classical_methods/              # Classical image-processing approaches
+├── classical_methods/
 │   ├── morphological_artifact_detection.m
 │   ├── correlation_artifact_detection.m
 │   └── reference/
-│       └── meanImage_weighted_1024_2.bmp
+│       └── meanImage_weighted.bmp
 │
-├── mobilenet/                      # MobileNet inference scripts and trained models
-├── shufflenet/                     # ShuffleNet inference scripts and trained models
-├── squeezenet/                     # SqueezeNet inference scripts and trained models
+├── deep_learning/
+│   ├── training/
+│   │   ├── mobilenet/
+│   │   │   ├── train_mobilenet_kfold.m
+│   │   │   ├── mobilenet_2class_base.mat
+│   │   │   └── mobilenet_4class_base.mat
+│   │   │
+│   │   ├── shufflenet/
+│   │   ├── squeezenet/
+│   │   │
+│   │   └── create_kfold_datastores.m
+│   │
+│   └── inference/
+│       ├── mobilenet/
+│       │   ├── two_class/
+│       │   │   ├── mobilenet_2class_inference.m
+│       │   │   └── mobilenet_2class_trained.mat
+│       │   │
+│       │   └── four_class/
+│       │       ├── mobilenet_4class_inference.m
+│       │       └── mobilenet_4class_trained.mat
+│       │
+│       ├── shufflenet/
+│       │   ├── two_class/
+│       │   └── four_class/
+│       │
+│       └── squeezenet/
+│           ├── two_class/
+│           └── four_class/
 │
 └── README.md
 ```
@@ -37,45 +64,76 @@ hartmann-shack-artifact-detection/
 
 ## Methods
 
-### 1. Classical Methods
+### 1. Classical Image Processing Methods
 
 The repository includes two classical approaches for artifact detection in HS images:
 
-* **Morphological-based detection**
+**Morphological-based detection**
 
-  * pupil detection
-  * pupil circularity validation
-  * pupil size validation
-  * corneal reflection detection
+* pupil detection
+* pupil circularity validation
+* pupil size validation
+* corneal reflection detection
 
-* **Correlation-based detection**
+**Correlation-based detection**
 
-  * pupil localization
-  * pupil centering
-  * image correlation with a reference mean image
-  * reflection-based rejection
+* pupil localization
+* pupil centering
+* image correlation with a reference mean image
+* reflection-based rejection
+
+---
 
 ### 2. Deep Learning Methods
 
-The repository includes deep learning inference pipelines based on:
+The repository includes deep learning pipelines based on:
 
-* **MobileNet**
-* **ShuffleNet**
-* **SqueezeNet**
+* MobileNet
+* ShuffleNet
+* SqueezeNet
 
-Each architecture is provided for:
+Each architecture supports:
 
-* **binary classification**
+**Binary classification**
 
-  * `valid`
-  * `invalid`
+* `valid`
+* `invalid`
 
-* **multiclass classification**
+**Multiclass classification**
 
-  * `blinking`
-  * `corneal`
-  * `laser reflex`
-  * `valid`
+* `blinking`
+* `corneal`
+* `laser reflex`
+* `valid`
+
+---
+
+## Training and Inference
+
+Each deep learning architecture follows a unified structure:
+
+```
+network_name/
+├── training/
+└── inference/
+```
+
+### Training
+
+* Training is performed using **k-fold cross-validation**
+* Scripts:
+
+  * `train_*_kfold.m`
+* Base configurations:
+
+  * `*_2class_base.mat`
+  * `*_4class_base.mat`
+
+Dataset splitting is handled using:
+
+```
+create_kfold_datastores.m
+```
 
 ---
 
@@ -91,14 +149,10 @@ Both terms refer to the same type of optical artifact.
 
 ### Binary Classification
 
-Binary classification scripts separate images into:
-
 * `valid`
 * `invalid`
 
 ### Multiclass Classification
-
-Multiclass classification scripts separate images into:
 
 * `blinking`
 * `corneal`
@@ -111,13 +165,13 @@ Multiclass classification scripts separate images into:
 
 ### Images
 
-Images should be placed inside an input folder such as:
+Place input images in a folder such as:
 
-```text
+```
 sample_images/
 ```
 
-Supported image formats include:
+Supported formats:
 
 * `.bmp`
 * `.png`
@@ -126,36 +180,33 @@ Supported image formats include:
 * `.tif`
 * `.tiff`
 
+---
+
 ### Label Files
 
-Ground-truth labels are optional. If provided, the scripts compute performance metrics.
+Excel format:
 
-The Excel label file must contain two columns:
-
-```text
+```
 filename | label
 ```
 
 #### Binary Example
 
-```text
-filename | label
+```
 img1.bmp | 1
 img2.bmp | 0
 ```
 
-or equivalently:
+or:
 
-```text
-filename | label
+```
 img1.bmp | valid
 img2.bmp | invalid
 ```
 
 #### Multiclass Example
 
-```text
-filename | label
+```
 img1.bmp | blinking
 img2.bmp | corneal
 img3.bmp | laser reflex
@@ -164,25 +215,25 @@ img4.bmp | valid
 
 Notes:
 
-* `filename` must exactly match the image filename, including the extension.
-* Labels may be numeric or text, depending on the script.
-* For multiclass scripts, text labels must exactly match the training labels.
+* filenames must match exactly
+* labels may be numeric or text
+* multiclass labels must match training labels
 
 ---
 
 ## Example Usage
 
-### Binary Classification Example
+### Binary Classification
 
 ```matlab
 mobilenet_2class_inference( ...
     'sample_images', ...
     'results', ...
-    'mobilenet_binary_trained.mat', ...
+    'mobilenet_2class_trained.mat', ...
     'sample_labels_2class.xlsx')
 ```
 
-### Multiclass Classification Example
+### Multiclass Classification
 
 ```matlab
 shufflenet_4class_inference( ...
@@ -192,26 +243,22 @@ shufflenet_4class_inference( ...
     'sample_labels_4class.xlsx')
 ```
 
-You may also run the scripts without a label file. In that case, the code performs inference only and skips performance evaluation.
-
 ---
 
 ## Output
 
-After execution, results are saved in a user-defined output folder.
+### Binary
 
-### Binary Classification Output
-
-```text
+```
 results/
 ├── valid/
 ├── invalid/
 └── prediction_results_YYYYMMDD_HHMMSS.xlsx
 ```
 
-### Multiclass Classification Output
+### Multiclass
 
-```text
+```
 results/
 ├── blinking/
 ├── corneal/
@@ -220,22 +267,19 @@ results/
 └── prediction_results_YYYYMMDD_HHMMSS.xlsx
 ```
 
-The output Excel file may include:
+Output may include:
 
 * image name
-* predicted class name
-* predicted label or label ID
+* predicted label
 * confidence score
-* elapsed processing time
-* optional ground-truth label
+* processing time
+* optional ground truth
 
 ---
 
 ## Evaluation Metrics
 
-If a label file is provided, the scripts compute quantitative evaluation metrics.
-
-### Binary Classification Metrics
+### Binary
 
 * Accuracy
 * Sensitivity (Recall)
@@ -244,91 +288,62 @@ If a label file is provided, the scripts compute quantitative evaluation metrics
 * F1-score
 * Confusion matrix
 
-### Multiclass Classification Metrics
+### Multiclass
 
 * Overall accuracy
 * Confusion matrix
-* Per-class precision
-* Per-class recall
-* Per-class F1-score
-* Macro-averaged precision
-* Macro-averaged recall
-* Macro-averaged F1-score
+* Per-class precision/recall/F1
+* Macro-averaged metrics
 
 ---
 
 ## Preprocessing
 
-### Classical Methods
-
-Preprocessing may include:
+### Classical
 
 * grayscale conversion
-* morphological opening
+* morphological operations
 * binarization
 * hole filling
-* connected-component analysis
-* pupil-based region-of-interest selection
+* connected components
 
-### Deep Learning Methods
+### Deep Learning
 
-Depending on the architecture, preprocessing may include:
-
-* grayscale to RGB conversion
-* removal of extra channels if present
-* resizing according to network input size
+* grayscale → RGB
+* resizing (224×224 or 227×227)
 * normalization
-
-Typical input resolutions:
-
-* **MobileNet**: typically `224 × 224`
-* **ShuffleNet**: typically `224 × 224`
-* **SqueezeNet**: typically `227 × 227`
-
-For SqueezeNet, ImageNet-style channel normalization is applied to match the training pipeline.
 
 ---
 
 ## Sample Data
 
-A small set of example Hartmann–Shack images is included in:
+Included for testing:
 
-```text
-sample_images/
-```
-
-The corresponding ground-truth label files are:
-
+* `sample_images/`
 * `sample_labels_2class.xlsx`
 * `sample_labels_4class.xlsx`
-
-These files can be used to test the inference scripts and verify the full pipeline.
 
 ---
 
 ## Requirements
 
-The code was developed in MATLAB and requires:
-
 * MATLAB
 * Deep Learning Toolbox
 * Image Processing Toolbox
 
-Depending on your workflow, GPU support may improve performance, but inference can also be executed on CPU.
+GPU is optional.
 
 ---
 
 ## Purpose
 
-This repository is intended for:
-
 * research reproducibility
-* comparison between classical and deep learning methods
-* practical testing of trained artifact-detection models
-* supporting material for academic publications
+* comparison of methods
+* evaluation of artifact detection pipelines
+* support for academic publications
 
 ---
 
 ## License
 
-This repository is intended for academic and research use.
+This project is released under the MIT License.
