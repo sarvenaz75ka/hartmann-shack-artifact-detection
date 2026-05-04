@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/20022015.svg)](https://doi.org/10.5281/zenodo.20022014)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20022014.svg)](https://doi.org/10.5281/zenodo.20022014)
 
 # Hartmann–Shack Artifact Detection
 
