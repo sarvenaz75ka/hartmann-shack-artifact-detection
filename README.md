@@ -1,12 +1,14 @@
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20022014-blue)](https://doi.org/10.5281/zenodo.20022014)
 
-# Hartmann–Shack Artifact Detection
+# Artifact Detection in Hartmann–Shack Images for Ocular Wavefront Sensing
 
-This repository provides a complete framework for detecting artifacts in Hartmann–Shack (HS) wavefront sensor images using both classical image processing methods and deep learning approaches.
 
-The MATLAB implementation and experimental evaluation are associated with the following peer-reviewed publication:
+Hartmann–Shack wavefront sensors (HSWSs) are widely used for ocular aberration measurements. However, image artifacts introduced during acquisition, such as blinks and undesired reflections, can impair spot detection and lead to inaccurate wavefront reconstruction. Reliable frame selection is therefore essential to prevent corrupted measurements from propagating through subsequent processing stages. This work presents a quality-control framework for ocular HSWS images based on automatic artifact detection prior to reconstruction. Two software-based approaches are investigated: conventional image-processing techniques and lightweight pretrained deep-learning models, evaluated under both two-class (valid/invalid) and four-class (valid, blink, corneal reflection, and lens reflection) classification tasks. Among the evaluated methods, MobileNet achieved the highest numerical performance, reaching accuracies of 99.6% and 99.1% in the two-class and four-class scenarios, respectively, while keeping the average processing time below 25 ms. Real-time evaluation using the four-class MobileNet model further showed that several sudden changes in the estimation of the spherical equivalent occurred in frames classified as containing artifacts, without these changes being representative of the refractive state of the eye. These findings support the integration of the proposed framework into existing HSWS systems as a preprocessing stage before centroid estimation and wavefront reconstruction, without requiring modifications to the optical hardware.
 
-**Related Publication:**  
+## Citation
+If you use the methods or results presented in this work, please cite the associated journal article:
+
+**Journal Article:**  
 *Artifact Detection in Hartmann–Shack Images for Ocular Wavefront Sensing*  
 **Journal:** Life (MDPI), 2026  
 **DOI:** https://doi.org/10.3390/life16111909
