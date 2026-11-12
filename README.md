@@ -4,6 +4,13 @@
 
 This repository provides a complete framework for detecting artifacts in Hartmann–Shack (HS) wavefront sensor images using both classical image processing methods and deep learning approaches.
 
+The MATLAB implementation and experimental evaluation are associated with the following peer-reviewed publication:
+
+**Related Publication:**  
+*Artifact Detection in Hartmann–Shack Images for Ocular Wavefront Sensing*  
+**Journal:** Life (MDPI), 2026  
+**DOI:** https://doi.org/10.3390/life16111909
+
 ## The repository includes
 
 * binary classification methods for **valid / invalid** HS images
